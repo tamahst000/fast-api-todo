@@ -1,0 +1,145 @@
+{% extends "layout.html" %} {% block content %}
+<br />
+<div class="row">
+  <div class="col-md-1">
+    <a href="/" class="btn btn-success">Top</a>
+  </div>
+  <div class="col-md-11">
+    <h2>Administrator page</h2>
+  </div>
+</div>
+
+<hr />
+<div style="text-align: left">
+  <h4>Hi, <span style="color: red">{{ user['username'] }}</span>.</h4>
+</div>
+
+<br />
+<h3>- 直近の予定 -</h3>
+<table class="table">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>内容</th>
+      <th>締め切り</th>
+      <th>掲載日</th>
+      <th>終了</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in task %}
+    <tr>
+      <td>{{ t['id'] }}</td>
+      <td><a href="{{links[loop.index-1]}}">{{ t['content'] }}</a></td>
+      <td>{{ t['deadline'] }}</td>
+      <td>{{ t['date'] }}</td>
+      <td>
+        {% if t['done'] %}
+        <div class="text-success">済</div>
+        {% else %}
+        <div class="text-danger">未</div>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<br />
+<h3>- すべての予定 -</h3>
+<button class="btn btn-warning" id="toggleAll">すべての予定を表示する</button>
+<table class="table" id="allTasks" style="display: none">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>内容</th>
+      <th>締め切り</th>
+      <th>掲載日</th>
+      <th>終了</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in task_all %}
+    <tr>
+      <td>{{ t['id'] }}</td>
+      <td><a href="{{links[loop.index-1]}}">{{ t['content'] }}</a></td>
+      <td>{{ t['deadline'] }}</td>
+      <td>{{ t['date'] }}</td>
+      <td>
+        {% if t['done'] %}
+        <div class="text-success">済</div>
+        {% else %}
+        <div class="text-danger">未</div>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br /><br />
+<hr />
+<h3>- カレンダー -</h3>
+<p>
+  <span class="text-danger">■</span> ... 本日。&nbsp;
+  <span class="text-warning">■</span> ... 予定があります。&nbsp;
+  <span class="text-secondary">■</span> ... 過去の予定。 &nbsp;
+  <span class="text-success">■</span> ... 終了した予定。
+</p>
+
+<br />
+<div class="row">
+  <div class="col-md-9">
+    <p>↓ 日付をクリックして予定を追加・確認などができます。</p>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-secondary" id="prevYearBtn">前の年</button>
+    <button class="btn btn-secondary" id="nowYearBtn">今年</button>
+    <button class="btn btn-secondary" id="nextYearBtn">次の年</button>
+  </div>
+</div>
+<br />
+
+<div id="calendar-prev-container" style="display: none">
+  {% autoescape false%} {{ calender_prev }} {% endautoescape%}
+</div>
+<div id="calendar-now-container" style="display: block">
+  {% autoescape false%} {{ calender_now }} {% endautoescape%}
+</div>
+<div id="calendar-next-container" style="display: none">
+  {% autoescape false%} {{ calender_next }} {% endautoescape%}
+</div>
+
+<script>
+  document.getElementById("toggleAll").addEventListener("click", function () {
+    var allTasksTable = document.getElementById("allTasks");
+    var toggleButton = document.getElementById("toggleAll");
+
+    if (allTasksTable.style.display === "none") {
+      allTasksTable.style.display = "table";
+      toggleButton.textContent = "すべての予定を非表示する";
+    } else {
+      allTasksTable.style.display = "none";
+      toggleButton.textContent = "すべての予定を表示する";
+    }
+  });
+
+  document.getElementById("prevYearBtn").addEventListener("click", function () {
+    document.getElementById("calendar-prev-container").style.display = "block";
+    document.getElementById("calendar-now-container").style.display = "none";
+    document.getElementById("calendar-next-container").style.display = "none";
+  });
+
+  document.getElementById("nowYearBtn").addEventListener("click", function () {
+    document.getElementById("calendar-next-container").style.display = "none";
+    document.getElementById("calendar-prev-container").style.display = "none";
+    document.getElementById("calendar-now-container").style.display = "block";
+  });
+
+  document.getElementById("nextYearBtn").addEventListener("click", function () {
+    document.getElementById("calendar-next-container").style.display = "block";
+    document.getElementById("calendar-prev-container").style.display = "none";
+    document.getElementById("calendar-now-container").style.display = "none";
+  });
+</script>
+
+{% endblock %}
